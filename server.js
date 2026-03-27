@@ -2,26 +2,50 @@ const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 
-// 1. استدعاء الـ Routers (مرة واحدة لكل ملف)
+// Routers
 const authRouter = require('./routes/authRoutes');
 const bookRouter = require('./routes/bookRoutes');
+const reviewRouter = require('./routes/reviewRoutes');
+const userRouter = require('./routes/userRoutes'); // 👈 صلحنا الاستدعاء هنا (حطينا const والنقطة)
+
+// Utils
+const AppError = require('./utils/AppError');
 
 dotenv.config();
 const app = express();
 
-// 2. Middlewares الأساسية
-app.use(express.json()); // عشان السيرفر يفهم الـ JSON اللي بعته في الـ Body
+// Middlewares الأساسية
+app.use(express.json()); // عشان السيرفر يفهم JSON
 
-// 3. ربط المسارات (Routes)
-app.use('/api/v1/auth', authRouter);  // كل ما يخص التسجيل والدخول
-app.use('/api/v1/books', bookRouter); // كل ما يخص الكتب والصلاحيات
+// ربط الـ Routes
+app.use('/api/v1/auth', authRouter);
+app.use('/api/v1/books', bookRouter);
+app.use('/api/v1/reviews', reviewRouter);
+app.use('/api/v1/users', userRouter); // 👈 ضفنا السطر ده عشان السيرفر يربط المسار بالراوتر
 
-// 4. الاتصال بالداتابيز
+// مسار صيد الروابط الغلط (404)
+app.use((req, res, next) => {
+    next(new AppError(`the server not found ${req.originalUrl}`, 404));
+});
+
+// Global Error Handling
+app.use((err, req, res, next) => {
+    err.statusCode = err.statusCode || 500;
+    err.status = err.status || 'error';
+
+    res.status(err.statusCode).json({
+        status: err.status,
+        message: err.message,
+        stack: err.stack
+    });
+});
+
+// الاتصال بالداتابيز
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log('Connected to MongoDB Successfully'))
-  .catch((err) => console.log(' DB Connection Error:', err));
+.then(() => console.log('Connected to MongoDB Successfully'))
+.catch((err) => console.log('DB Connection Error:', err));
 
-// 5. تشغيل السيرفر
 const port = process.env.PORT || 3000;
-app.listen(port, () => {console.log(`Server running on port ${port}`)
+app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
 });
