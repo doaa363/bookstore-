@@ -25,19 +25,19 @@ const userSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
-// 1. تشفير الباسورد قبل الحفظ في الداتابيز
-userSchema.pre('save', async function () {
-    // لو الباسورد متغيرش (أو ده مش يوزر جديد)، متعملش حاجة
-    if (!this.isModified('password')) return;
+// 1. Hash the password before saving it to the database
+userSchema.pre('save', async function (next) {
+    // If the password hasn't been modified (or it's not a new user), skip hashing
+    if (!this.isModified('password')) return next();
 
-    // تشفير الباسورد
+    // Hash the password with a cost factor of 12
     this.password = await bcrypt.hash(this.password, 12);
 });
 
-// 2. دالة لمقارنة الباسورد العادي بالمتشفر (هنحتاجها في الـ Login)
+// 2. Instance method to compare the plain text password with the hashed password (used during login)
 userSchema.methods.correctPassword = async function(candidatePassword, userPassword) {
     return await bcrypt.compare(candidatePassword, userPassword);
 };
 
-// 3. تصدير الموديل عشان نقدر نستخدمه في باقي المشروع
+// 3. Export the model for use in other parts of the application
 module.exports = mongoose.model('User', userSchema);

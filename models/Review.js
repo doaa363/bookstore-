@@ -3,25 +3,25 @@ const mongoose = require('mongoose');
 const reviewSchema = new mongoose.Schema({
     review: {
         type: String,
-        required: [true, 'لازم تكتب رأيك في الكتاب!']
+        required: [true, 'Review content cannot be empty!']
     },
     rating: {
         type: Number,
-        min: [1, 'أقل تقييم هو 1'],
-        max: [5, 'أعلى تقييم هو 5'],
-        required: [true, 'لازم تدي تقييم للكتاب من 1 لـ 5']
+        min: [1, 'Rating must be at least 1'],
+        max: [5, 'Rating cannot be more than 5'],
+        required: [true, 'Please provide a rating between 1 and 5']
     },
-    // هنا بنربط التقييم بالكتاب
+    // Reference to the book being reviewed
     book: {
         type: mongoose.Schema.ObjectId,
         ref: 'Book',
-        required: [true, 'التقييم لازم يكون تابع لكتاب معين']
+        required: [true, 'A review must belong to a book']
     },
-    // وهنا بنربط التقييم بالمستخدم اللي كتبه
+    // Reference to the user who wrote the review
     user: {
         type: mongoose.Schema.ObjectId,
         ref: 'User',
-        required: [true, 'التقييم لازم يكون من مستخدم مسجل']
+        required: [true, 'A review must belong to a user']
     }
 }, { timestamps: true });
 

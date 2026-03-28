@@ -13,7 +13,7 @@ exports.protect = async (req, res, next) => {
         if (!token) {
             return res.status(401).json({ 
                 status: 'fail',
-                message: 'أنت غير مسجل دخول، يرجى تسجيل الدخول للوصول لهذا المسار' 
+                message: '' 
             });
         }
 
@@ -25,7 +25,7 @@ exports.protect = async (req, res, next) => {
         if (!currentUser) {
             return res.status(401).json({
                 status: 'fail',
-                message: 'المستخدم المرتبط بهذا التوكن لم يعد موجوداً'
+                message: 'Token is invalid or expired'
             });
         }
 
@@ -35,7 +35,7 @@ exports.protect = async (req, res, next) => {
     } catch (err) {
         res.status(401).json({ 
             status: 'fail',
-            message: 'التوكن غير صالح أو انتهت صلاحيته' 
+            message: 'Token is invalid or expired'
         });
     }
 };

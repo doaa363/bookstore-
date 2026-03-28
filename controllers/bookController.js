@@ -32,7 +32,7 @@ exports.getBook = catchAsync(async (req, res, next) => {
     const book = await Book.findById(req.params.id);
     
     if (!book) {
-        return next(new AppError('الكتاب ده مش موجود يا هندسة! 🧐', 404));
+        return next(new AppError('This book is not available, engineer!', 404));
     }
     
     res.status(200).json({ 
@@ -50,7 +50,7 @@ exports.updateBook = catchAsync(async (req, res, next) => {
     });
 
     if (!book) {
-        return next(new AppError('مش عارف أعدل كتاب مش موجود أصلاً! 😅', 404));
+        return next(new AppError('There is no book that can be edited', 404));
     }
 
     res.status(200).json({ 
@@ -64,7 +64,7 @@ exports.deleteBook = catchAsync(async (req, res, next) => {
     const book = await Book.findByIdAndDelete(req.params.id);
 
     if (!book) {
-        return next(new AppError('بتحاول تمسح سراب؟ الكتاب مش موجود! 👻', 404));
+        return next(new AppError('there is no book availble', 404));
     }
 
     // الـ 204 مش بترجع Body، بس بنبعت success للتأكيد داخلياً

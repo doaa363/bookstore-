@@ -3,20 +3,20 @@ const mongoose = require('mongoose');
 const bookSchema = new mongoose.Schema({
     title: {
         type: String,
-        required: [true, 'لازم تكتب عنوان الكتاب'],
+        required: [true, 'You must write the book title'],
         trim: true
     },
     description: {
         type: String,
-        required: [true, 'لازم تكتب وصف للكتاب']
+        required: [true, 'you must write a description for the book ']
     },
     author: {
         type: String,
-        required: [true, 'لازم تكتب اسم المؤلف']
+        required: [true, 'you have to write the auther name']
     },
     price: {
         type: Number,
-        required: [true, 'لازم تحدد سعر الكتاب']
+        required: [true, 'you have to detirmane the price of the book']
     },
     stock: {
         type: Number,
@@ -24,7 +24,7 @@ const bookSchema = new mongoose.Schema({
     },
     category: {
         type: String,
-        required: [true, 'لازم تحدد تصنيف الكتاب (مثل: رواية، برمجة)']
+        required: [true, 'You must specify the book']
     }
 }, { timestamps: true }); // بيضيف وقت الإنشاء والتعديل تلقائياً
 
