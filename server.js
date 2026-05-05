@@ -2,33 +2,34 @@ const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 
-// Routers
+// 1) Route Imports
+// Updated Paths: Now looking directly in the 'routes' folder
 const authRouter = require('./routes/authRoutes');
 const bookRouter = require('./routes/bookRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
-const userRouter = require('./routes/userRoutes'); // 👈 صلحنا الاستدعاء هنا (حطينا const والنقطة)
+const userRouter = require('./routes/userRoutes');
 
-// Utils
+// 2) Utils
 const AppError = require('./utils/AppError');
 
 dotenv.config();
 const app = express();
 
-// Middlewares الأساسية
-app.use(express.json()); // عشان السيرفر يفهم JSON
+// 3) Global Middlewares
+app.use(express.json()); // Essential for parsing JSON request bodies
 
-// ربط الـ Routes
+// 4) Route Mounting
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/books', bookRouter);
 app.use('/api/v1/reviews', reviewRouter);
-app.use('/api/v1/users', userRouter); // 👈 ضفنا السطر ده عشان السيرفر يربط المسار بالراوتر
+app.use('/api/v1/users', userRouter);
 
-// مسار صيد الروابط الغلط (404)
-app.use((req, res, next) => {
-    next(new AppError(`the server not found ${req.originalUrl}`, 404));
+// 5) Handling Unhandled Routes (404)
+app.all(/(.*)/, (req, res, next) => {
+    next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
 
-// Global Error Handling
+// 6) Global Error Handling Middleware
 app.use((err, req, res, next) => {
     err.statusCode = err.statusCode || 500;
     err.status = err.status || 'error';
@@ -40,12 +41,21 @@ app.use((err, req, res, next) => {
     });
 });
 
-// الاتصال بالداتابيز
-mongoose.connect(process.env.MONGO_URI)
-.then(() => console.log('Connected to MongoDB Successfully'))
-.catch((err) => console.log('DB Connection Error:', err));
+// 7) Database Connection
+// Falls back to local MongoDB if MONGO_URI is not provided in .env
+const DB = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/libraryDB";
 
-const port = process.env.PORT || 3000;
+mongoose.connect(DB)
+    .then(() => {
+        console.log('Connected to MongoDB Successfully');
+        console.log('--- Database is active and ready ---');
+    })
+    .catch((err) => {
+        console.log('❌ DB Connection Error:', err.message);
+    });
+
+// 8) Server Initialization
+const port = process.env.PORT || 5000;
 app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
+    console.log(`Server running on port ${port}...`);
 });

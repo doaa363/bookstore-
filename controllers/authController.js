@@ -1,4 +1,4 @@
-const User = require('../models/user'); 
+const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 
 const signToken = (id) => {
@@ -15,7 +15,6 @@ exports.signup = async (req, res, next) => {
             password: req.body.password,
             role: req.body.role || 'user'
         });
-
         const token = signToken(newUser._id);
         res.status(201).json({
             status: 'success',
@@ -26,7 +25,6 @@ exports.signup = async (req, res, next) => {
         res.status(400).json({ status: 'fail', message: err.message });
     }
 };
-
 exports.login = async (req, res, next) => {
     try {
         const { email, password } = req.body;

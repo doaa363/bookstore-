@@ -1,8 +1,8 @@
-const User = require('../models/user'); // تأكد إن الاسم مطابق للي في فولدر models
+const User = require('../models/user'); 
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/AppError');
 
-// 1) GET ALL USERS (Admin Only usually)
+// 1) GET ALL USERS 
 exports.getAllUsers = catchAsync(async (req, res, next) => {
   const users = await User.find();
 
@@ -12,8 +12,7 @@ exports.getAllUsers = catchAsync(async (req, res, next) => {
     data: { users }
   });
 });
-
-// 2) UPDATE CURRENT USER DATA (Me)
+// 2) UPDATE CURRENT USER DATA 
 exports.updateMe = catchAsync(async (req, res, next) => {
   // 1) Create error if user POSTs password data
   if (req.body.password || req.body.passwordConfirm) {
